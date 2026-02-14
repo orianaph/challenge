@@ -1,12 +1,11 @@
 package com.oriana.challenge.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-//@JsonPropertyOrder({ "costoId", "puntoA", "puntoB", "costo" })
+
 @Data
 @NoArgsConstructor
 @Entity
@@ -19,18 +18,19 @@ public class CostoViaje {
 
     @ManyToOne
     @JsonProperty(index = 2)
-    private PuntoVenta puntoA;
+    private PuntoVenta puntoOrigen;
 
     @ManyToOne
     @JsonProperty(index = 3)
-    private PuntoVenta puntoB;
+    private PuntoVenta puntoDestino;
 
     @JsonProperty(index = 4)
     private int costo;
 
     public CostoViaje(PuntoVenta a, PuntoVenta b, int costo) {
-        this.puntoA = a;
-        this.puntoB = b;
+
+        this.puntoOrigen = a;
+        this.puntoDestino = b;
         this.costo = costo;
     }
 
