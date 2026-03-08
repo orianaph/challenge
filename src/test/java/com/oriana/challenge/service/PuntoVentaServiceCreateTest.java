@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import com.oriana.challenge.service.impl.PuntoVentaServiceImpl;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,7 +23,7 @@ class PuntoVentaServiceCreateTest {
     private PuntoVentaRepository repository;
 
     @InjectMocks
-    private PuntoVentaService service;
+    private PuntoVentaServiceImpl service;
 
     @BeforeEach
     void setup() {

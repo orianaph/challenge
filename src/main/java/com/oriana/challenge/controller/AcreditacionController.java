@@ -1,7 +1,6 @@
 package com.oriana.challenge.controller;
 
 import com.oriana.challenge.entity.Acreditacion;
-import com.oriana.challenge.entity.CostoViaje;
 import com.oriana.challenge.service.AcreditacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -12,10 +12,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import com.oriana.challenge.service.impl.CostoViajeServiceImpl;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,7 +25,7 @@ class CostoViajeServiceTest {
     private CostoViajeRepository repository;
 
     @InjectMocks
-    private CostoViajeService service;
+    private CostoViajeServiceImpl service;
 
     private PuntoVenta pv1;
     private PuntoVenta pv2;
