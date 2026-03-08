@@ -2,7 +2,6 @@ package com.oriana.challenge.controller;
 
 import com.oriana.challenge.dto.RutaMinimaResponse;
 import com.oriana.challenge.entity.CostoViaje;
-import com.oriana.challenge.entity.PuntoVenta;
 import com.oriana.challenge.service.CostoViajeService;
 import com.oriana.challenge.service.PuntoVentaService;
 import org.springframework.beans.factory.annotation.Autowired;

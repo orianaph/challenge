@@ -15,7 +15,7 @@ import java.util.Optional;
 public class PuntoVentaService {
 
     @Autowired
-    PuntoVentaRepository puntoVentaRepository;
+    private PuntoVentaRepository puntoVentaRepository;
 
     public List<PuntoVenta> getListaPuntoVenta() {
         try {
@@ -44,7 +44,8 @@ public class PuntoVentaService {
             if (puntoVentaRepository.findByNombre(puntoVenta.getNombre()).isPresent()) {
                 throw new RuntimeException("Punto de venta con nombre: " + puntoVenta.getNombre() + " ya existe.");
             }
-            return puntoVentaRepository.save(puntoVenta);
+            PuntoVenta savedPuntoVenta = puntoVentaRepository.save(puntoVenta);
+            return savedPuntoVenta;
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -55,7 +56,8 @@ public class PuntoVentaService {
     public void deletePuntoVentaById(long id) {
 
         try {
-            if (!puntoVentaRepository.existsById(id)) {
+            Optional<PuntoVenta> puntoVenta = puntoVentaRepository.findById(id);
+            if (!puntoVenta.isPresent()) {
                 throw new RuntimeException("PuntoVenta con id: " + id + " no encontrado");
             }
             puntoVentaRepository.deleteById(id);
