@@ -11,7 +11,7 @@ public interface CostoViajeService {
 
     CostoViaje saveCostoViaje(CostoViaje costoViaje);
 
-    CostoViaje createCostoViaje(CostoViaje costoViaje) throws Exception;
+    CostoViaje createCostoViaje(CostoViaje costoViaje);
 
     List<CostoViaje> getCostosPorPuntoVenta(Long id);
 

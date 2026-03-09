@@ -4,6 +4,7 @@ import com.oriana.challenge.service.AcreditacionService;
 
 import com.oriana.challenge.entity.Acreditacion;
 import com.oriana.challenge.repository.AcreditacionRepository;
+import com.oriana.challenge.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,22 +18,12 @@ public class AcreditacionServiceImpl implements AcreditacionService {
 
     public Acreditacion getAcreditacionById(Long id) {
         //validateId(id);
-        try {
-            return acreditacionRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Acreditacion con id: " + id + " no encontrado"));
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException("Error al obtener acreditacion", e);
-        }
+        return acreditacionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Acreditacion con id: " + id + " no encontrado"));
     }
 
     public List<Acreditacion> getAcreditacionesByPuntoVentaId(Long id) {
-        try {
-            return acreditacionRepository.findAllByPuntoVenta(id);
-        } catch (Exception e) {
-            throw new RuntimeException("Error al obtener acreditaciones por punto de venta", e);
-        }
+        return acreditacionRepository.findAllByPuntoVenta(id);
     }
 
 

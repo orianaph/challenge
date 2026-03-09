@@ -21,49 +21,31 @@ public class PuntoVentaController {
     //Trae lista de punto de ventas, utiliza try catch con excepcion generica. Devuelve ResponseEntity
     @GetMapping("/getall")
     public ResponseEntity<?> listPuntoVenta() {
-        try {
-            List<PuntoVenta> lista = puntoVentaService.getListaPuntoVenta();
-            if (lista == null || lista.isEmpty()) {
-                return ResponseEntity.noContent().build();
-            }
-            return ResponseEntity.ok(lista);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener la lista de puntos de venta: " + e.getMessage());
+        List<PuntoVenta> lista = puntoVentaService.getListaPuntoVenta();
+        if (lista == null || lista.isEmpty()) {
+            return ResponseEntity.noContent().build();
         }
+        return ResponseEntity.ok(lista);
     }
 
 
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getPuntoVenta(@PathVariable(name = "id") long id) {
-        try {
-            PuntoVenta puntoVenta = puntoVentaService.getPuntoVentaById(id);
-            return ResponseEntity.ok(puntoVenta);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        PuntoVenta puntoVenta = puntoVentaService.getPuntoVentaById(id);
+        return ResponseEntity.ok(puntoVenta);
     }
 
     @PostMapping("/add")
     public ResponseEntity<?> addPuntoVenta(@Valid @RequestBody PuntoVenta puntoVenta) {
-        try {
-            PuntoVenta nuevoPunto = puntoVentaService.savePuntoVenta(puntoVenta);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPunto);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear punto de venta: " + e.getMessage());
-        }
+        PuntoVenta nuevoPunto = puntoVentaService.savePuntoVenta(puntoVenta);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPunto);
     }
 
     //Try catch basico, logica de validacion en service, devuelve response entity
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deletePuntoVenta(@PathVariable long id) {
-        try {
-            puntoVentaService.deletePuntoVentaById(id);
-            return ResponseEntity.ok("Punto de venta eliminado con id: " + id);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        puntoVentaService.deletePuntoVentaById(id);
+        return ResponseEntity.ok("Punto de venta eliminado con id: " + id);
     }
 
     //Recibe un body y un path variable, valida que tengan el mismo id y lo guarda con los nuevos valores.
@@ -74,12 +56,8 @@ public class PuntoVentaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body("ID en path y body deben ser iguales");
         }
-        try {
-            puntoVentaService.updatePuntoVentaById(puntoVenta);
-            return ResponseEntity.ok("Punto de venta actualizado con id: " + id);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        puntoVentaService.updatePuntoVentaById(puntoVenta);
+        return ResponseEntity.ok("Punto de venta actualizado con id: " + id);
     }
 }
 

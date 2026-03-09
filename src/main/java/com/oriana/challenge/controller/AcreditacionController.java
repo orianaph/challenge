@@ -19,36 +19,22 @@ public class AcreditacionController {
 
     @PostMapping("/create")
     public ResponseEntity<?> addAcreditacion(@RequestBody Acreditacion acreditacion) {
-        try {
-            Acreditacion result = acreditacionService.createAcreditacion(acreditacion);
-            return ResponseEntity.status(HttpStatus.CREATED).body(result);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        Acreditacion result = acreditacionService.createAcreditacion(acreditacion);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getAcreditacionById(@PathVariable Long id){
-        try {
-            Acreditacion acreditacion = acreditacionService.getAcreditacionById(id);
-
-            return ResponseEntity.ok(acreditacion);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        Acreditacion acreditacion = acreditacionService.getAcreditacionById(id);
+        return ResponseEntity.ok(acreditacion);
     }
 
 
     @GetMapping("/puntoVenta/{puntoVentaid}")
     public ResponseEntity<?> getAcreditacionByPuntoVenta(@PathVariable("puntoVentaid") Long puntoVentaid){
-        try {
-            List<Acreditacion> acreditaciones = acreditacionService.getAcreditacionesByPuntoVentaId(puntoVentaid);
-
-            return ResponseEntity.ok(acreditaciones);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        List<Acreditacion> acreditaciones = acreditacionService.getAcreditacionesByPuntoVentaId(puntoVentaid);
+        return ResponseEntity.ok(acreditaciones);
     }
 
 

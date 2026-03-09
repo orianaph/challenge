@@ -3,6 +3,8 @@ package com.oriana.challenge.service;
 import com.oriana.challenge.dto.RutaMinimaResponse;
 import com.oriana.challenge.entity.CostoViaje;
 import com.oriana.challenge.entity.PuntoVenta;
+import com.oriana.challenge.exception.InvalidInputException;
+import com.oriana.challenge.exception.ResourceNotFoundException;
 import com.oriana.challenge.repository.CostoViajeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,7 +80,7 @@ class CostoViajeServiceTest {
         CostoViaje r = new CostoViaje();
         r.setPuntoOrigen(null);
         r.setPuntoDestino(null);
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+        InvalidInputException ex = assertThrows(InvalidInputException.class,
                 () -> service.createCostoViaje(r));
         assertTrue(ex.getMessage().contains("nulos"));
     }
@@ -86,7 +88,7 @@ class CostoViajeServiceTest {
     @Test
     void createCostoViaje_samePointsThrows() {
         CostoViaje r = new CostoViaje(pv1, pv1, 1);
-        Exception ex = assertThrows(Exception.class,
+        InvalidInputException ex = assertThrows(InvalidInputException.class,
                 () -> service.createCostoViaje(r));
         assertTrue(ex.getMessage().contains("identicos"));
     }
@@ -102,16 +104,16 @@ class CostoViajeServiceTest {
     @Test
     void deleteCostoViaje_nonexistentThrows() {
         when(repository.deleteByOrigenAndDestino(1L, 2L)).thenReturn(0);
-        IllegalStateException ex = assertThrows(IllegalStateException.class,
+        ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class,
                 () -> service.deleteCostoViaje(1L, 2L));
         assertTrue(ex.getMessage().contains("No existe"));
     }
 
     @Test
     void deleteCostoViaje_invalidArgsThrows() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidInputException.class,
                 () -> service.deleteCostoViaje(null, 2L));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(InvalidInputException.class,
                 () -> service.deleteCostoViaje(2L, 2L));
     }
 

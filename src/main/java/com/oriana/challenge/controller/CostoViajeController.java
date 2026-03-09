@@ -27,7 +27,7 @@ public class CostoViajeController {
     }
 
     @PostMapping("/create")
-    public CostoViaje addCostoViaje(@RequestBody CostoViaje costoViaje) throws Exception {
+    public CostoViaje addCostoViaje(@RequestBody CostoViaje costoViaje) {
         return costoViajeService.createCostoViaje(costoViaje);
     }
 
@@ -36,19 +36,14 @@ public class CostoViajeController {
      */
     @GetMapping("/puntos-venta/{puntoId}")
     public ResponseEntity<?> getCostosPorPuntoVenta(@PathVariable Long puntoId) {
-        try {
-            List<CostoViaje> costos = costoViajeService.getCostosPorPuntoVenta(puntoId);
-
-            return ResponseEntity.ok(costos);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        List<CostoViaje> costos = costoViajeService.getCostosPorPuntoVenta(puntoId);
+        return ResponseEntity.ok(costos);
     }
 
     @DeleteMapping("/{puntoA}/{puntoB}")
     public ResponseEntity<?> eliminarCostoViaje(@PathVariable Long puntoA, @PathVariable Long puntoB) {
         costoViajeService.deleteCostoViaje(puntoA, puntoB);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Costo de viaje eliminado entre puntos " + puntoA + " y " + puntoB);
     }
 
 

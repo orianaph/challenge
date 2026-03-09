@@ -6,6 +6,8 @@ import com.oriana.challenge.dto.RutaMinimaResponse;
 import com.oriana.challenge.entity.CostoViaje;
 import com.oriana.challenge.entity.PuntoVenta;
 import com.oriana.challenge.repository.CostoViajeRepository;
+import com.oriana.challenge.exception.InvalidInputException;
+import com.oriana.challenge.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,12 +31,12 @@ public class CostoViajeServiceImpl implements CostoViajeService {
         return costoViajeRepository.save(costoViaje);
     }
 
-    public CostoViaje createCostoViaje(CostoViaje costoViaje) throws Exception {
+    public CostoViaje createCostoViaje(CostoViaje costoViaje) {
         if (costoViaje.getPuntoOrigen() == null || costoViaje.getPuntoDestino() == null) {
-            throw new IllegalArgumentException("Los puntos de venta no pueden ser nulos");
+            throw new InvalidInputException("Los puntos de venta no pueden ser nulos");
         }
         if (costoViaje.getPuntoOrigen().equals(costoViaje.getPuntoDestino())) {
-            throw new Exception("Puntos de venta identicos");
+            throw new InvalidInputException("Puntos de venta identicos");
         }
 
         normalizarOrden(costoViaje);
@@ -51,11 +53,11 @@ public class CostoViajeServiceImpl implements CostoViajeService {
     public void deleteCostoViaje(Long puntoA, Long puntoB) {
 
         if (puntoA == null || puntoB == null) {
-            throw new IllegalArgumentException("Los puntos no pueden ser nulos");
+            throw new InvalidInputException("Los puntos no pueden ser nulos");
         }
 
         if (puntoA.equals(puntoB)) {
-            throw new IllegalArgumentException("Los puntos no pueden ser iguales");
+            throw new InvalidInputException("Los puntos no pueden ser iguales");
         }
 
         Long origenId = Math.min(puntoA, puntoB);
@@ -64,9 +66,7 @@ public class CostoViajeServiceImpl implements CostoViajeService {
         int deleted = costoViajeRepository.deleteByOrigenAndDestino(origenId, destinoId);
 
         if (deleted == 0) {
-            throw new IllegalStateException(
-                    "No existe un costo entre esos puntos de venta"
-            );
+            throw new ResourceNotFoundException("No existe un costo entre esos puntos de venta");
         }
 
     }
