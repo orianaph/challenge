@@ -1,0 +1,202 @@
+@startuml Spring Boot Challenge - Class Diagram
+
+' Architectural Layers
+package "Controller Layer" as Controllers #LightBlue {
+    class PuntoVentaController {
+        - PuntoVentaService puntoVentaService
+        + listPuntoVenta(): ResponseEntity<List<PuntoVenta>>
+        + getPuntoVenta(Long id): ResponseEntity<PuntoVenta>
+        + addPuntoVenta(@Valid PuntoVenta puntoVenta): ResponseEntity<PuntoVenta>
+        + deletePuntoVenta(@Min(1) Long id): ResponseEntity<String>
+    }
+
+    class AcreditacionController {
+        - AcreditacionService acreditacionService
+        + addAcreditacion(@Valid AcreditacionCreateRequest request): ResponseEntity<Acreditacion>
+        + getAcreditacionById(@Min(1) Long id): ResponseEntity<Acreditacion>
+        + getAcreditacionByPuntoVenta(@Min(1) Long puntoVentaId): ResponseEntity<List<Acreditacion>>
+    }
+
+    class CostoViajeController {
+        - CostoViajeService costoViajeService
+        - PuntoVentaService puntoVentaService
+        + listCostoViaje(): List<CostoViaje>
+        + addCostoViaje(@Valid CostoViaje costoViaje): CostoViaje
+        + getCostosPorPuntoVenta(@Min(1) Long puntoId): ResponseEntity<List<CostoViaje>>
+        + eliminarCostoViaje(@Min(1) Long puntoA, @Min(1) Long puntoB): ResponseEntity<String>
+        + calcularRuta(@Min(1) Long origen, @Min(1) Long destino): RutaMinimaResponse
+    }
+}
+
+package "Service Layer" as Services #LightGreen {
+    interface PuntoVentaService {
+        + getListaPuntoVenta(): List<PuntoVenta>
+        + getPuntoVentaById(Long id): PuntoVenta
+        + savePuntoVenta(PuntoVenta puntoVenta): PuntoVenta
+        + deletePuntoVentaById(Long id): void
+        + updatePuntoVentaById(PuntoVenta puntoVenta): void
+    }
+
+    class PuntoVentaServiceImpl implements PuntoVentaService {
+        - PuntoVentaRepository puntoVentaRepository
+    }
+
+    interface AcreditacionService {
+        + getAcreditacionById(Long id): Acreditacion
+        + getAcreditacionesByPuntoVentaId(Long id): List<Acreditacion>
+        + createAcreditacion(AcreditacionCreateRequest request): Acreditacion
+    }
+
+    class AcreditacionServiceImpl implements AcreditacionService {
+        - AcreditacionRepository acreditacionRepository
+        - PuntoVentaRepository puntoVentaRepository
+    }
+
+    interface CostoViajeService {
+        + getAllCostoViaje(): List<CostoViaje>
+        + saveCostoViaje(CostoViaje costoViaje): CostoViaje
+        + createCostoViaje(CostoViaje costoViaje): CostoViaje
+        + getCostosPorPuntoVenta(Long id): List<CostoViaje>
+        + deleteCostoViaje(Long puntoA, Long puntoB): void
+        + calcularRutaMinima(Long origenId, Long destinoId): RutaMinimaResponse
+    }
+
+    class CostoViajeServiceImpl implements CostoViajeService {
+        - CostoViajeRepository costoViajeRepository
+    }
+}
+
+package "Repository Layer" as Repositories #LightYellow {
+    interface PuntoVentaRepository extends JpaRepository<PuntoVenta, Long> {
+        + findByNombre(String nombre): Optional<PuntoVenta>
+    }
+
+    interface AcreditacionRepository extends JpaRepository<Acreditacion, Long> {
+        + findAllByPuntoVenta(PuntoVenta puntoVenta): List<Acreditacion>
+    }
+
+    interface CostoViajeRepository extends JpaRepository<CostoViaje, Long> {
+        + findAllByPuntoVenta(Long id): List<CostoViaje>
+        + deleteByOrigenAndDestino(Long origenId, Long destinoId): int
+    }
+}
+
+package "Entity Layer" as Entities #LightCoral {
+    class PuntoVenta {
+        - Long id
+        - String nombre
+        + PuntoVenta(String nombre)
+        --
+        {static} + @Id @GeneratedValue(strategy = GenerationType.IDENTITY) id
+        {static} + @NotBlank(message = "El nombre no puede estar vacío") nombre
+        {static} + @Size(min = 2, max = 100, message = "El nombre debe tener entre 2 y 100 caracteres") nombre
+    }
+
+    class Acreditacion {
+        - Long id
+        - Date fechaReception
+        - Double importe
+        - PuntoVenta puntoVenta
+        --
+        {static} + @Id @GeneratedValue(strategy = GenerationType.IDENTITY) id
+        {static} + @NotNull(message = "La fecha de recepción es obligatoria") fechaReception
+        {static} + @PastOrPresent(message = "La fecha de recepción no puede ser futura") fechaReception
+        {static} + @NotNull(message = "El importe es obligatorio") importe
+        {static} + @Positive(message = "El importe debe ser positivo") importe
+        {static} + @NotNull(message = "El punto de venta es obligatorio") puntoVenta
+    }
+
+    class CostoViaje {
+        - Long costoId
+        - PuntoVenta puntoOrigen
+        - PuntoVenta puntoDestino
+        - int costo
+        + CostoViaje(PuntoVenta a, PuntoVenta b, int costo)
+        --
+        {static} + @Id @GeneratedValue(strategy = GenerationType.IDENTITY) costoId
+        {static} + @NotNull(message = "El punto de origen es obligatorio") puntoOrigen
+        {static} + @NotNull(message = "El punto de destino es obligatorio") puntoDestino
+        {static} + @Min(value = 1, message = "El costo debe ser mayor a 0") costo
+    }
+}
+
+package "DTO Layer" as DTOs #LightGray {
+    class AcreditacionCreateRequest {
+        - Long puntoVentaId
+        - Double importe
+        --
+        {static} + @NotNull(message = "El ID del punto de venta es obligatorio") puntoVentaId
+        {static} + @Positive(message = "El ID del punto de venta debe ser positivo") puntoVentaId
+        {static} + @NotNull(message = "El importe es obligatorio") importe
+        {static} + @Positive(message = "El importe debe ser positivo") importe
+    }
+
+    class RutaMinimaResponse {
+        - int totalCost
+        - List<Long> path
+        + RutaMinimaResponse(int totalCost, List<Long> path)
+    }
+}
+
+package "Exception Layer" as Exceptions #LightPink {
+    class GlobalExceptionHandler {
+        + handleResourceNotFound(ResourceNotFoundException e): ResponseEntity<String>
+        + handleResourceAlreadyExists(ResourceAlreadyExistsException e): ResponseEntity<String>
+        + handleInvalidInput(InvalidInputException e): ResponseEntity<String>
+        + handleValidationExceptions(MethodArgumentNotValidException e): ResponseEntity<String>
+        + handleGenericException(Exception e): ResponseEntity<String>
+    }
+
+    class ResourceNotFoundException extends RuntimeException {
+        + ResourceNotFoundException(String message)
+    }
+
+    class ResourceAlreadyExistsException extends RuntimeException {
+        + ResourceAlreadyExistsException(String message)
+    }
+
+    class InvalidInputException extends RuntimeException {
+        + InvalidInputException(String message)
+    }
+}
+
+' Relationships
+PuntoVentaController --> PuntoVentaService : uses
+AcreditacionController --> AcreditacionService : uses
+CostoViajeController --> CostoViajeService : uses
+CostoViajeController --> PuntoVentaService : uses
+
+PuntoVentaService <|.. PuntoVentaServiceImpl : implements
+AcreditacionService <|.. AcreditacionServiceImpl : implements
+CostoViajeService <|.. CostoViajeServiceImpl : implements
+
+PuntoVentaServiceImpl --> PuntoVentaRepository : uses
+AcreditacionServiceImpl --> AcreditacionRepository : uses
+AcreditacionServiceImpl --> PuntoVentaRepository : uses
+CostoViajeServiceImpl --> CostoViajeRepository : uses
+
+Acreditacion --> PuntoVenta : puntoVenta\n(Many-to-One)
+CostoViaje --> PuntoVenta : puntoOrigen\n(Many-to-One)
+CostoViaje --> PuntoVenta : puntoDestino\n(Many-to-One)
+
+AcreditacionController --> AcreditacionCreateRequest : uses
+CostoViajeController --> RutaMinimaResponse : returns
+
+PuntoVentaServiceImpl --> ResourceNotFoundException : throws
+PuntoVentaServiceImpl --> ResourceAlreadyExistsException : throws
+PuntoVentaServiceImpl --> InvalidInputException : throws
+AcreditacionServiceImpl --> ResourceNotFoundException : throws
+AcreditacionServiceImpl --> InvalidInputException : throws
+CostoViajeServiceImpl --> InvalidInputException : throws
+CostoViajeServiceImpl --> ResourceNotFoundException : throws
+
+GlobalExceptionHandler --> ResourceNotFoundException : handles
+GlobalExceptionHandler --> ResourceAlreadyExistsException : handles
+GlobalExceptionHandler --> InvalidInputException : handles
+
+' Layer dependencies
+Controllers --> Services : depends on
+Services --> Repositories : depends on
+Repositories --> Entities : manages
+
+@enduml

@@ -38,8 +38,7 @@ class PuntoVentaControllerTest {
     @MockitoBean
     private PuntoVentaService puntoVentaService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
