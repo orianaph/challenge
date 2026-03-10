@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 
 import java.util.Date;
 
+// comment
 @Entity
 public class Acreditacion {
 
