@@ -1,8 +1,11 @@
 package com.oriana.challenge.service;
 
+import com.oriana.challenge.dto.AcreditacionCreateRequest;
 import com.oriana.challenge.entity.Acreditacion;
+import com.oriana.challenge.entity.PuntoVenta;
 import com.oriana.challenge.exception.ResourceNotFoundException;
 import com.oriana.challenge.repository.AcreditacionRepository;
+import com.oriana.challenge.repository.PuntoVentaRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,6 +26,9 @@ class AcreditacionServiceTest {
 
     @Mock
     private AcreditacionRepository repository;
+
+    @Mock
+    private PuntoVentaRepository puntoVentaRepository;
 
     @InjectMocks
     private AcreditacionServiceImpl service;
@@ -63,18 +69,25 @@ class AcreditacionServiceTest {
 
     @Test
     void createAcreditacion_delegatesToRepository() {
-        Acreditacion toSave = new Acreditacion();
-        toSave.setImporte(200.0);
+        AcreditacionCreateRequest request = new AcreditacionCreateRequest();
+        request.setPuntoVentaId(1L);
+        request.setImporte(200.0);
 
-        when(repository.save(any())).thenAnswer(i -> {
+        PuntoVenta puntoVenta = new PuntoVenta();
+        puntoVenta.setId(1L);
+        puntoVenta.setNombre("Test");
+
+        when(puntoVentaRepository.findById(1L)).thenReturn(Optional.of(puntoVenta));
+        when(repository.save(any(Acreditacion.class))).thenAnswer(i -> {
             Acreditacion a = i.getArgument(0);
             a.setId(1L);
             return a;
         });
 
-        Acreditacion result = service.createAcreditacion(toSave);
+        Acreditacion result = service.createAcreditacion(request);
         assertNotNull(result.getId());
         assertEquals(200.0, result.getImporte());
-        verify(repository).save(toSave);
+        assertEquals(puntoVenta, result.getPuntoVenta());
+        verify(repository).save(any(Acreditacion.class));
     }
 }

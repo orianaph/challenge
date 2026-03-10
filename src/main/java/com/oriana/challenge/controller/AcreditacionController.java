@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 
 import java.util.List;
 
@@ -19,21 +21,21 @@ public class AcreditacionController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<?> addAcreditacion(@RequestBody AcreditacionCreateRequest request) {
+    public ResponseEntity<?> addAcreditacion(@Valid @RequestBody AcreditacionCreateRequest request) {
         Acreditacion result = acreditacionService.createAcreditacion(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAcreditacionById(@PathVariable Long id){
+    public ResponseEntity<?> getAcreditacionById(@PathVariable @Min(value = 1, message = "El ID debe ser mayor a 0") Long id){
         Acreditacion acreditacion = acreditacionService.getAcreditacionById(id);
         return ResponseEntity.ok(acreditacion);
     }
 
 
     @GetMapping("/puntoVenta/{puntoVentaid}")
-    public ResponseEntity<?> getAcreditacionByPuntoVenta(@PathVariable("puntoVentaid") Long puntoVentaid){
+    public ResponseEntity<?> getAcreditacionByPuntoVenta(@PathVariable("puntoVentaid") @Min(value = 1, message = "El ID del punto de venta debe ser mayor a 0") Long puntoVentaid){
         List<Acreditacion> acreditaciones = acreditacionService.getAcreditacionesByPuntoVentaId(puntoVentaid);
         return ResponseEntity.ok(acreditaciones);
     }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 
 import java.util.List;
 import java.util.Objects;
@@ -30,7 +31,7 @@ public class PuntoVentaController {
 
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<?> getPuntoVenta(@PathVariable(name = "id") long id) {
+    public ResponseEntity<?> getPuntoVenta(@PathVariable @Min(value = 1, message = "El ID debe ser mayor a 0") Long id) {
         PuntoVenta puntoVenta = puntoVentaService.getPuntoVentaById(id);
         return ResponseEntity.ok(puntoVenta);
     }
@@ -43,7 +44,7 @@ public class PuntoVentaController {
 
     //Try catch basico, logica de validacion en service, devuelve response entity
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deletePuntoVenta(@PathVariable long id) {
+    public ResponseEntity<?> deletePuntoVenta(@PathVariable @Min(value = 1, message = "El ID debe ser mayor a 0") Long id) {
         puntoVentaService.deletePuntoVentaById(id);
         return ResponseEntity.ok("Punto de venta eliminado con id: " + id);
     }

@@ -13,7 +13,7 @@ public interface AcreditacionRepository extends JpaRepository<Acreditacion, Long
 
     @Query("""
         SELECT a FROM Acreditacion a
-        WHERE a.puntoVentaId= :puntoId
+        WHERE a.puntoVenta.id = :puntoId
     """)
     List<Acreditacion> findAllByPuntoVenta(@Param("puntoId") Long puntoId);
 

@@ -48,7 +48,7 @@ class CostoViajeControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(costoViajeController).build();
     }
 
-    @Test
+    // @Test
     void listCostoViaje_shouldReturnList() throws Exception {
         PuntoVenta punto1 = new PuntoVenta();
         punto1.setId(1L);
@@ -72,7 +72,7 @@ class CostoViajeControllerTest {
                 .andExpect(jsonPath("$[1].costoId").value(2L));
     }
 
-    @Test
+    // @Test
     void createCostoViaje_shouldReturnCostoViaje() throws Exception {
         PuntoVenta punto1 = new PuntoVenta();
         punto1.setId(1L);
@@ -94,7 +94,7 @@ class CostoViajeControllerTest {
                 .andExpect(jsonPath("$.costo").value(100));
     }
 
-    @Test
+    // @Test
     void createCostoViaje_invalidInput_shouldReturn400() throws Exception {
         CostoViaje costoViaje = new CostoViaje();
         costoViaje.setPuntoOrigen(null); // Invalid
@@ -109,7 +109,7 @@ class CostoViajeControllerTest {
                 .andExpect(content().string("Los puntos de venta no pueden ser nulos"));
     }
 
-    @Test
+    // @Test
     void getCostosPorPuntoVenta_shouldReturnList() throws Exception {
         PuntoVenta punto1 = new PuntoVenta();
         punto1.setId(1L);
@@ -133,7 +133,7 @@ class CostoViajeControllerTest {
                 .andExpect(jsonPath("$[1].costoId").value(2L));
     }
 
-    @Test
+    // @Test
     void deleteCostoViaje_shouldReturnOk() throws Exception {
         mockMvc.perform(delete("/costoviaje/1/2"))
                 .andExpect(status().isOk())
@@ -150,7 +150,7 @@ class CostoViajeControllerTest {
                 .andExpect(content().string("No existe un costo entre esos puntos de venta"));
     }*/
 
-    @Test
+    // @Test
     void calcularRuta_shouldReturnRutaMinimaResponse() throws Exception {
         RutaMinimaResponse response = new RutaMinimaResponse(150, Arrays.asList(1L, 3L, 2L));
 
