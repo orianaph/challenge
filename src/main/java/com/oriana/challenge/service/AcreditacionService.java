@@ -1,5 +1,6 @@
 package com.oriana.challenge.service;
 
+import com.oriana.challenge.dto.AcreditacionCreateRequest;
 import com.oriana.challenge.entity.Acreditacion;
 
 import java.util.List;
@@ -10,5 +11,5 @@ public interface AcreditacionService {
 
     List<Acreditacion> getAcreditacionesByPuntoVentaId(Long id);
 
-    Acreditacion createAcreditacion(Acreditacion acreditacion);
+    Acreditacion createAcreditacion(AcreditacionCreateRequest request);
 }

@@ -1,5 +1,6 @@
 package com.oriana.challenge.controller;
 
+import com.oriana.challenge.dto.AcreditacionCreateRequest;
 import com.oriana.challenge.entity.Acreditacion;
 import com.oriana.challenge.service.AcreditacionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,8 @@ public class AcreditacionController {
 
 
     @PostMapping("/create")
-    public ResponseEntity<?> addAcreditacion(@RequestBody Acreditacion acreditacion) {
-        Acreditacion result = acreditacionService.createAcreditacion(acreditacion);
+    public ResponseEntity<?> addAcreditacion(@RequestBody AcreditacionCreateRequest request) {
+        Acreditacion result = acreditacionService.createAcreditacion(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
