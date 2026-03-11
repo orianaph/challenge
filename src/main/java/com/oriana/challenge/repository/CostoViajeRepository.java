@@ -22,7 +22,8 @@ public interface CostoViajeRepository extends JpaRepository<CostoViaje, Long> {
 
 
     @Query("""
-        SELECT c FROM CostoViaje c
+        SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END
+        FROM CostoViaje c
         WHERE c.puntoOrigen.id = :origenId
           AND c.puntoDestino.id = :destinoId
     """)
