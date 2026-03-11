@@ -8,18 +8,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.Objects;
 
 @RestController
 @RequestMapping("/puntoventa")
+@Validated
 public class PuntoVentaController {
 
     @Autowired
     private PuntoVentaService puntoVentaService;
 
-    //Trae lista de punto de ventas, utiliza try catch con excepcion generica. Devuelve ResponseEntity
     @GetMapping("/getall")
     public ResponseEntity<?> listPuntoVenta() {
         List<PuntoVenta> lista = puntoVentaService.getListaPuntoVenta();
@@ -42,14 +43,13 @@ public class PuntoVentaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPunto);
     }
 
-    //Try catch basico, logica de validacion en service, devuelve response entity
+    
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deletePuntoVenta(@PathVariable @Min(value = 1, message = "El ID debe ser mayor a 0") Long id) {
         puntoVentaService.deletePuntoVentaById(id);
         return ResponseEntity.ok("Punto de venta eliminado con id: " + id);
     }
 
-    //Recibe un body y un path variable, valida que tengan el mismo id y lo guarda con los nuevos valores.
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updatePuntoVenta(@PathVariable long id,
                                                    @Valid @RequestBody PuntoVenta puntoVenta) {

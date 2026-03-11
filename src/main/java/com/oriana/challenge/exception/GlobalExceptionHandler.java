@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import jakarta.validation.ConstraintViolationException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -29,6 +30,15 @@ public class GlobalExceptionHandler {
         StringBuilder errors = new StringBuilder();
         e.getBindingResult().getFieldErrors().forEach(error ->
             errors.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("; ")
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors: " + errors.toString());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
+        StringBuilder errors = new StringBuilder();
+        e.getConstraintViolations().forEach(violation ->
+            errors.append(violation.getPropertyPath()).append(": ").append(violation.getMessage()).append("; ")
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation errors: " + errors.toString());
     }
