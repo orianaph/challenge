@@ -20,11 +20,22 @@ public class CostoViajeServiceImpl implements CostoViajeService {
     @Autowired
     private CostoViajeRepository costoViajeRepository;
 
+    @Autowired
+    private com.oriana.challenge.service.PuntoVentaService puntoVentaService;
+
     private record Edge(Long to, int cost) {}
     private record Node(Long id, int cost) {}
 
     public List<CostoViaje> getAllCostoViaje() {
         return costoViajeRepository.findAll();
+    }
+
+    @Override
+    public CostoViaje createCostoViaje(Long puntoOrigenId, Long puntoDestinoId, int costo) {
+        PuntoVenta origen = puntoVentaService.getPuntoVentaById(puntoOrigenId);
+        PuntoVenta destino = puntoVentaService.getPuntoVentaById(puntoDestinoId);
+        CostoViaje entity = new CostoViaje(origen, destino, costo);
+        return createCostoViaje(entity); // reutilizar la validación existente
     }
 
 
@@ -40,13 +51,13 @@ public class CostoViajeServiceImpl implements CostoViajeService {
             throw new InvalidInputException("Puntos de venta identicos");
         }
 
-        // normalize order of points so we always store smaller id as origin
+        // normalizar el orden de los puntos para que siempre guardemos el ID menor como origen
         normalizarOrden(costoViaje);
 
         Long origenId = costoViaje.getPuntoOrigen().getId();
         Long destinoId = costoViaje.getPuntoDestino().getId();
 
-        // check for existing route
+        // verificar si ya existe la ruta
         if (costoViajeRepository.existsByOrigenAndDestino(origenId, destinoId)) {
             throw new ResourceAlreadyExistsException(
                     "Ya existe un costo de viaje entre esos puntos de venta");
@@ -110,7 +121,7 @@ public class CostoViajeServiceImpl implements CostoViajeService {
 
                 if (newCost < dist.getOrDefault(edge.to(), Integer.MAX_VALUE)) {
                     dist.put(edge.to(), newCost);
-                    previous.put(edge.to(), current.id); // 👈 store previous
+                    previous.put(edge.to(), current.id); // 👈 almacenar anterior
                     pq.add(new Node(edge.to(), newCost));
                 }
             }

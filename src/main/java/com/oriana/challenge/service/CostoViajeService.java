@@ -13,6 +13,11 @@ public interface CostoViajeService {
 
     CostoViaje createCostoViaje(CostoViaje costoViaje);
 
+    /**
+     * Create a new CostoViaje by supplying punto venta IDs and cost.
+     */
+    CostoViaje createCostoViaje(Long puntoOrigenId, Long puntoDestinoId, int costo);
+
     List<CostoViaje> getCostosPorPuntoVenta(Long id);
 
     void deleteCostoViaje(Long puntoA, Long puntoB);

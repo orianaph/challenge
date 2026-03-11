@@ -31,7 +31,7 @@ class PuntoVentaServiceCreateTest {
 
     @BeforeEach
     void setup() {
-        // nothing to set up for this simple case
+        // nada que configurar para este caso simple
     }
 
     @Test

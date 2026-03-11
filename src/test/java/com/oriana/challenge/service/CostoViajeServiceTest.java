@@ -26,6 +26,9 @@ class CostoViajeServiceTest {
     @Mock
     private CostoViajeRepository repository;
 
+    @Mock
+    private com.oriana.challenge.service.PuntoVentaService puntoVentaService;
+
     @InjectMocks
     private CostoViajeServiceImpl service;
 
@@ -35,6 +38,7 @@ class CostoViajeServiceTest {
 
     @BeforeEach
     void setup() {
+        // inyectar servicio de punto en el impl (Mockito lo hará con @InjectMocks)
         pv1 = new PuntoVenta("A");
         pv1.setId(1L);
         pv2 = new PuntoVenta("B");
@@ -66,13 +70,27 @@ class CostoViajeServiceTest {
     @Test
     void createCostoViaje_normalizesAndSaves() throws Exception {
         CostoViaje permit = new CostoViaje(pv2, pv1, 10);
-        // origin id > dest id, normalization should swap
+        // el ID de origen > ID de destino, la normalización debe invertirlos
+        // el objeto permit no tiene costoId porque no es necesario para crear
         when(repository.save(any())).thenAnswer(i -> i.getArgument(0));
 
         CostoViaje result = service.createCostoViaje(permit);
         assertEquals(1L, result.getPuntoOrigen().getId());
         assertEquals(2L, result.getPuntoDestino().getId());
         assertEquals(10, result.getCosto());
+    }
+
+    @Test
+    void createCostoViaje_withIdsLoadsPoints() {
+        when(puntoVentaService.getPuntoVentaById(1L)).thenReturn(pv1);
+        when(puntoVentaService.getPuntoVentaById(2L)).thenReturn(pv2);
+        when(repository.existsByOrigenAndDestino(1L, 2L)).thenReturn(false);
+        when(repository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        CostoViaje result = service.createCostoViaje(1L, 2L, 20);
+        assertEquals(1L, result.getPuntoOrigen().getId());
+        assertEquals(2L, result.getPuntoDestino().getId());
+        assertEquals(20, result.getCosto());
     }
 
     @Test
@@ -96,7 +114,7 @@ class CostoViajeServiceTest {
     @Test
     void createCostoViaje_duplicateThrows() {
         CostoViaje r = new CostoViaje(pv1, pv2, 10);
-        // repository should be queried with normalized order
+        // el repositorio debe consultarse con el orden normalizado
         when(repository.existsByOrigenAndDestino(1L, 2L)).thenReturn(true);
 
         com.oriana.challenge.exception.ResourceAlreadyExistsException ex =
@@ -131,7 +149,7 @@ class CostoViajeServiceTest {
 
     @Test
     void calcularRutaMinima_simplePath() {
-        // build graph: 1-2 cost2, 2-3 cost3, 1-3 cost10
+        // construir grafo: 1-2 costo2, 2-3 costo3, 1-3 costo10
         CostoViaje r1 = new CostoViaje(pv1, pv2, 2);
         CostoViaje r2 = new CostoViaje(pv2, pv3, 3);
         CostoViaje r3 = new CostoViaje(pv1, pv3, 10);
@@ -144,7 +162,7 @@ class CostoViajeServiceTest {
 
     @Test
     void calcularRutaMinima_noPathThrows() {
-        // graph with only 1 and 2 disconnected from 3
+        // grafo donde sólo 1 y 2 están conectados, 3 está aislado
         CostoViaje r1 = new CostoViaje(pv1, pv2, 2);
         when(repository.findAll()).thenReturn(List.of(r1));
 

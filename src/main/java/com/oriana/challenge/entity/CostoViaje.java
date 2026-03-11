@@ -20,7 +20,7 @@ public class CostoViaje {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty(index = 1)
+    @JsonProperty(index = 1, access = JsonProperty.Access.READ_ONLY)
     private Long costoId;
 
     @NotNull(message = "El punto de origen es obligatorio")
