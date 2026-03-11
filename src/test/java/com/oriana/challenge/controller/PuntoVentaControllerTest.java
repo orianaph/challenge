@@ -135,14 +135,11 @@ class PuntoVentaControllerTest {
         PuntoVenta pv = new PuntoVenta();
         pv.setNombre(""); // Invalid
 
-        when(puntoVentaService.savePuntoVenta(any(PuntoVenta.class)))
-                .thenThrow(new com.oriana.challenge.exception.InvalidInputException("El nombre del punto de venta no puede estar vacío"));
-
         mockMvc.perform(post("/puntoventa/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(pv)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("El nombre del punto de venta no puede estar vacío"));
+                .andExpect(content().string("Validation errors: nombre: El nombre debe tener entre 2 y 100 caracteres; nombre: El nombre no puede estar vacío; "));
     }
 
     @Test
