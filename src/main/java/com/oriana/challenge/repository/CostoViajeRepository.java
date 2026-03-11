@@ -21,6 +21,16 @@ public interface CostoViajeRepository extends JpaRepository<CostoViaje, Long> {
     List<CostoViaje> findAllByPuntoVenta(@Param("puntoId") Long puntoId);
 
 
+    @Query("""
+        SELECT c FROM CostoViaje c
+        WHERE c.puntoOrigen.id = :origenId
+          AND c.puntoDestino.id = :destinoId
+    """)
+    boolean existsByOrigenAndDestino(
+            @Param("origenId") Long origenId,
+            @Param("destinoId") Long destinoId
+    );
+
     @Modifying
     @Transactional
     @Query("""

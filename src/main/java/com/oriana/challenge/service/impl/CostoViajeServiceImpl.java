@@ -8,6 +8,7 @@ import com.oriana.challenge.entity.PuntoVenta;
 import com.oriana.challenge.repository.CostoViajeRepository;
 import com.oriana.challenge.exception.InvalidInputException;
 import com.oriana.challenge.exception.ResourceNotFoundException;
+import com.oriana.challenge.exception.ResourceAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +40,18 @@ public class CostoViajeServiceImpl implements CostoViajeService {
             throw new InvalidInputException("Puntos de venta identicos");
         }
 
+        // normalize order of points so we always store smaller id as origin
         normalizarOrden(costoViaje);
+
+        Long origenId = costoViaje.getPuntoOrigen().getId();
+        Long destinoId = costoViaje.getPuntoDestino().getId();
+
+        // check for existing route
+        if (costoViajeRepository.existsByOrigenAndDestino(origenId, destinoId)) {
+            throw new ResourceAlreadyExistsException(
+                    "Ya existe un costo de viaje entre esos puntos de venta");
+        }
+
         return costoViajeRepository.save(costoViaje);
     }
 

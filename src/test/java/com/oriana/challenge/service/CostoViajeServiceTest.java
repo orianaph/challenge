@@ -94,6 +94,18 @@ class CostoViajeServiceTest {
     }
 
     @Test
+    void createCostoViaje_duplicateThrows() {
+        CostoViaje r = new CostoViaje(pv1, pv2, 10);
+        // repository should be queried with normalized order
+        when(repository.existsByOrigenAndDestino(1L, 2L)).thenReturn(true);
+
+        com.oriana.challenge.exception.ResourceAlreadyExistsException ex =
+                assertThrows(com.oriana.challenge.exception.ResourceAlreadyExistsException.class,
+                        () -> service.createCostoViaje(r));
+        assertTrue(ex.getMessage().contains("Ya existe"));
+    }
+
+    @Test
     void deleteCostoViaje_success() {
         when(repository.deleteByOrigenAndDestino(1L, 2L)).thenReturn(1);
 

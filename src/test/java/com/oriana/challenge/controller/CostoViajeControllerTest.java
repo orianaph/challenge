@@ -108,6 +108,27 @@ class CostoViajeControllerTest {
     }
 
     // @Test
+    void createCostoViaje_duplicate_shouldReturnConflict() throws Exception {
+        PuntoVenta punto1 = new PuntoVenta();
+        punto1.setId(1L);
+        punto1.setNombre("Punto 1");
+        PuntoVenta punto2 = new PuntoVenta();
+        punto2.setId(2L);
+        punto2.setNombre("Punto 2");
+
+        CostoViaje costoViaje = new CostoViaje(punto1, punto2, 100);
+
+        when(costoViajeService.createCostoViaje(any(CostoViaje.class)))
+                .thenThrow(new com.oriana.challenge.exception.ResourceAlreadyExistsException("Ya existe un costo de viaje entre esos puntos de venta"));
+
+        mockMvc.perform(post("/costoviaje/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(costoViaje)))
+                .andExpect(status().isConflict())
+                .andExpect(content().string("Ya existe un costo de viaje entre esos puntos de venta"));
+    }
+
+    // @Test
     void getCostosPorPuntoVenta_shouldReturnList() throws Exception {
         PuntoVenta punto1 = new PuntoVenta();
         punto1.setId(1L);

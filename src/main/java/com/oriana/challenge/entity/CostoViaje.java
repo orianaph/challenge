@@ -11,6 +11,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Entity
+@Table(
+    uniqueConstraints = @UniqueConstraint(
+        columnNames = {"puntoOrigen_id", "puntoDestino_id"}
+    )
+)
 public class CostoViaje {
 
     @Id
