@@ -3,7 +3,11 @@ package com.oriana.challenge.dto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class CostoViajeCreateRequest {
 
     @NotNull(message = "El ID del punto de origen es obligatorio")
@@ -17,27 +21,4 @@ public class CostoViajeCreateRequest {
     @Min(value = 1, message = "El costo debe ser mayor a 0")
     private int costo;
 
-    public Long getPuntoOrigenId() {
-        return puntoOrigenId;
-    }
-
-    public void setPuntoOrigenId(Long puntoOrigenId) {
-        this.puntoOrigenId = puntoOrigenId;
-    }
-
-    public Long getPuntoDestinoId() {
-        return puntoDestinoId;
-    }
-
-    public void setPuntoDestinoId(Long puntoDestinoId) {
-        this.puntoDestinoId = puntoDestinoId;
-    }
-
-    public int getCosto() {
-        return costo;
-    }
-
-    public void setCosto(int costo) {
-        this.costo = costo;
-    }
 }

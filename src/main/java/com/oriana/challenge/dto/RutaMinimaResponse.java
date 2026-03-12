@@ -1,7 +1,12 @@
 package com.oriana.challenge.dto;
 
+import lombok.Builder;
+import lombok.Value;
+
 import java.util.List;
 
+@Builder
+@Value
 public class RutaMinimaResponse {
 
     private final int totalCost;
@@ -12,11 +17,5 @@ public class RutaMinimaResponse {
         this.path = path;
     }
 
-    public int getTotalCost() {
-        return totalCost;
-    }
 
-    public List<Long> getPath() {
-        return path;
-    }
 }

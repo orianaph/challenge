@@ -2,7 +2,11 @@ package com.oriana.challenge.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class AcreditacionCreateRequest {
 
     @NotNull(message = "El ID del punto de venta es obligatorio")
@@ -13,19 +17,5 @@ public class AcreditacionCreateRequest {
     @Positive(message = "El importe debe ser positivo")
     private Double importe;
 
-    public Long getPuntoVentaId() {
-        return puntoVentaId;
-    }
 
-    public void setPuntoVentaId(Long puntoVentaId) {
-        this.puntoVentaId = puntoVentaId;
-    }
-
-    public Double getImporte() {
-        return importe;
-    }
-
-    public void setImporte(Double importe) {
-        this.importe = importe;
-    }
 }
