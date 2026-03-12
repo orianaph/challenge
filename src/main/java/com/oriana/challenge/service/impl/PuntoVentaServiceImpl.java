@@ -10,6 +10,7 @@ import com.oriana.challenge.exception.InvalidInputException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -26,12 +27,15 @@ public class PuntoVentaServiceImpl implements PuntoVentaService {
         return puntoVentaRepository.findAll();
     }
 
+
     public PuntoVenta getPuntoVentaById(Long id) {
         validateId(id);
         return puntoVentaRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("PuntoVenta con id: " + id + " no encontrado"));
     }
 
+
+    @Transactional
     public PuntoVenta savePuntoVenta(PuntoVenta puntoVenta) {
         validatePuntoVenta(puntoVenta);
         
@@ -41,6 +45,7 @@ public class PuntoVentaServiceImpl implements PuntoVentaService {
         return puntoVentaRepository.save(puntoVenta);
     }
 
+    @Transactional
     public void deletePuntoVentaById(long id) {
 
         Optional<PuntoVenta> puntoVenta = puntoVentaRepository.findById(id);
@@ -50,7 +55,7 @@ public class PuntoVentaServiceImpl implements PuntoVentaService {
         puntoVentaRepository.deleteById(id);
     }
 
-
+    @Transactional
     public void updatePuntoVentaById(PuntoVenta puntoVenta) {
         validatePuntoVenta(puntoVenta);
         validateId(puntoVenta.getId());
@@ -71,7 +76,7 @@ public class PuntoVentaServiceImpl implements PuntoVentaService {
         puntoVentaRepository.save(find);
     }
 
-    // === Métodos privados de validación ===
+    //  Métodos privados de validación
     
     private void validateId(Long id) {
         if (id == null || id <= 0) {

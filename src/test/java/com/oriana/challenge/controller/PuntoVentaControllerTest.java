@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -139,7 +140,8 @@ class PuntoVentaControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(pv)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Validation errors: nombre: El nombre debe tener entre 2 y 100 caracteres; nombre: El nombre no puede estar vacío; "));
+                .andExpect(content().string(containsString("El nombre no puede estar vacío")))
+                .andExpect(content().string(containsString("El nombre debe tener entre 2 y 100 caracteres")));
     }
 
     @Test

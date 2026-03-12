@@ -11,6 +11,7 @@ import com.oriana.challenge.exception.ResourceNotFoundException;
 import com.oriana.challenge.exception.ResourceAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -43,6 +44,7 @@ public class CostoViajeServiceImpl implements CostoViajeService {
         return costoViajeRepository.save(costoViaje);
     }
 
+    @Transactional
     public CostoViaje createCostoViaje(CostoViaje costoViaje) {
         if (costoViaje.getPuntoOrigen() == null || costoViaje.getPuntoDestino() == null) {
             throw new InvalidInputException("Los puntos de venta no pueden ser nulos");
@@ -72,7 +74,7 @@ public class CostoViajeServiceImpl implements CostoViajeService {
     }
 
 
-
+    @Transactional
     public void deleteCostoViaje(Long puntoA, Long puntoB) {
 
         if (puntoA == null || puntoB == null) {

@@ -11,6 +11,7 @@ import com.oriana.challenge.exception.ResourceNotFoundException;
 import com.oriana.challenge.exception.InvalidInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -35,7 +36,7 @@ public class AcreditacionServiceImpl implements AcreditacionService {
         return acreditacionRepository.findAllByPuntoVenta(id);
     }
 
-
+    @Transactional
     public Acreditacion createAcreditacion(AcreditacionCreateRequest request) {
         if (request == null) {
             throw new InvalidInputException("La solicitud no puede ser nula");
