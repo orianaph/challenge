@@ -1,6 +1,7 @@
 package com.oriana.challenge.controller;
 
 import com.oriana.challenge.dto.RutaMinimaResponse;
+import com.oriana.challenge.dto.CostoViajeCreateRequest;
 import com.oriana.challenge.entity.CostoViaje;
 import com.oriana.challenge.service.CostoViajeService;
 import com.oriana.challenge.service.PuntoVentaService;
@@ -31,8 +32,13 @@ public class CostoViajeController {
     }
 
     @PostMapping("/create")
-    public CostoViaje addCostoViaje(@Valid @RequestBody CostoViaje costoViaje) {
-        return costoViajeService.createCostoViaje(costoViaje);
+    public CostoViaje addCostoViaje(@Valid @RequestBody CostoViajeCreateRequest request) {
+        // el servicio se encarga de cargar los PuntoVenta y validar
+        return costoViajeService.createCostoViaje(
+                request.getPuntoOrigenId(),
+                request.getPuntoDestinoId(),
+                request.getCosto()
+        );
     }
 
     /**

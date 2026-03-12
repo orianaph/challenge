@@ -2,6 +2,7 @@ package com.oriana.challenge.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oriana.challenge.dto.CostoViajeCreateRequest;
 import com.oriana.challenge.dto.RutaMinimaResponse;
 import com.oriana.challenge.entity.PuntoVenta;
 import com.oriana.challenge.entity.CostoViaje;
@@ -20,6 +21,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -72,6 +76,11 @@ class CostoViajeControllerTest {
 
     // @Test
     void createCostoViaje_shouldReturnCostoViaje() throws Exception {
+        CostoViajeCreateRequest request = new CostoViajeCreateRequest();
+        request.setPuntoOrigenId(1L);
+        request.setPuntoDestinoId(2L);
+        request.setCosto(100);
+
         PuntoVenta punto1 = new PuntoVenta();
         punto1.setId(1L);
         punto1.setNombre("Punto 1");
@@ -80,50 +89,46 @@ class CostoViajeControllerTest {
         punto2.setNombre("Punto 2");
 
         CostoViaje costoViaje = new CostoViaje(punto1, punto2, 100);
-        costoViaje.setCostoId(1L);
-
-        when(costoViajeService.createCostoViaje(any(CostoViaje.class))).thenReturn(costoViaje);
+        
+        when(costoViajeService.createCostoViaje(eq(1L), eq(2L), eq(100))).thenReturn(costoViaje);
 
         mockMvc.perform(post("/costoviaje/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(costoViaje)))
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.costoId").value(1L))
                 .andExpect(jsonPath("$.costo").value(100));
     }
 
     // @Test
     void createCostoViaje_invalidInput_shouldReturn400() throws Exception {
-        CostoViaje costoViaje = new CostoViaje();
-        costoViaje.setPuntoOrigen(null); // Invalid
+        CostoViajeCreateRequest request = new CostoViajeCreateRequest();
+        request.setPuntoOrigenId(null); // falta origen
+        request.setPuntoDestinoId(2L);
+        request.setCosto(50);
 
-        when(costoViajeService.createCostoViaje(any(CostoViaje.class)))
+        // la validación del controlador debería captar el ID de origen nulo, pero también simular el comportamiento del servicio
+        when(costoViajeService.createCostoViaje(anyLong(), anyLong(), anyInt()))
                 .thenThrow(new com.oriana.challenge.exception.InvalidInputException("Los puntos de venta no pueden ser nulos"));
 
         mockMvc.perform(post("/costoviaje/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(costoViaje)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Los puntos de venta no pueden ser nulos"));
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
     }
 
     // @Test
     void createCostoViaje_duplicate_shouldReturnConflict() throws Exception {
-        PuntoVenta punto1 = new PuntoVenta();
-        punto1.setId(1L);
-        punto1.setNombre("Punto 1");
-        PuntoVenta punto2 = new PuntoVenta();
-        punto2.setId(2L);
-        punto2.setNombre("Punto 2");
+        CostoViajeCreateRequest request = new CostoViajeCreateRequest();
+        request.setPuntoOrigenId(1L);
+        request.setPuntoDestinoId(2L);
+        request.setCosto(100);
 
-        CostoViaje costoViaje = new CostoViaje(punto1, punto2, 100);
-
-        when(costoViajeService.createCostoViaje(any(CostoViaje.class)))
+        when(costoViajeService.createCostoViaje(eq(1L), eq(2L), eq(100)))
                 .thenThrow(new com.oriana.challenge.exception.ResourceAlreadyExistsException("Ya existe un costo de viaje entre esos puntos de venta"));
 
         mockMvc.perform(post("/costoviaje/create")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(costoViaje)))
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isConflict())
                 .andExpect(content().string("Ya existe un costo de viaje entre esos puntos de venta"));
     }

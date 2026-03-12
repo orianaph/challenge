@@ -119,7 +119,7 @@ class AcreditacionControllerTest {
     @Test
     void createAcreditacion_invalidRequest_shouldReturn400() throws Exception {
         AcreditacionCreateRequest request = new AcreditacionCreateRequest();
-        // Missing required fields
+        // faltan campos requeridos
 
         mockMvc.perform(post("/acreditaciones/create")
                 .contentType(MediaType.APPLICATION_JSON)
